@@ -1,6 +1,9 @@
-// chunk(common);
-// chunk(fog_pars_fragment);
-// chunk(shadowmap_pars_fragment);
+#include <common>
+#include <packing>
+#include <lights_pars_begin>
+#include <shadowmap_pars_fragment>
+#include <shadowmask_pars_fragment>
+#include <fog_pars_fragment>
 
 varying float vLife;
 uniform vec3 color1;
@@ -9,14 +12,12 @@ uniform vec3 color2;
 void main() {
 
     vec3 outgoingLight = mix(color2, color1, smoothstep(0.0, 0.7, vLife));
+	
+    outgoingLight *=  getShadowMask();
 
-    // chunk(shadowmap_fragment);
-
-    outgoingLight *= shadowMask;//pow(shadowMask, vec3(0.75));
-
-    // chunk(fog_fragment);
-    // chunk(linear_to_gamma_fragment);
+	outgoingLight = pow( outgoingLight, vec3( 1.0 / 2.2 ) );
 
     gl_FragColor = vec4( outgoingLight, 1.0 );
-
+	
+	#include <fog_fragment>
 }

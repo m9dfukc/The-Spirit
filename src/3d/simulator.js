@@ -42,10 +42,10 @@ function init(renderer) {
         alert( 'No support for vertex shader textures!' );
         return;
     }
-    if ( !gl.getExtension( 'OES_texture_float' )) {
-        alert( 'No OES_texture_float support for float textures!' );
-        return;
-    }
+    // if ( !gl.getExtension( 'OES_texture_float' )) {
+		// alert( 'No OES_texture_float support for float textures!' );
+		// return;
+    // }
 
     _scene = new THREE.Scene();
     _camera = new THREE.Camera();
@@ -82,7 +82,7 @@ function init(renderer) {
         depthTest: false
     });
 
-    _mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), _copyShader );
+    _mesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2 ), _copyShader );
     _scene.add( _mesh );
 
     _positionRenderTarget = new THREE.WebGLRenderTarget(TEXTURE_WIDTH, TEXTURE_HEIGHT, {
@@ -97,15 +97,17 @@ function init(renderer) {
         stencilBuffer: false
     });
     _positionRenderTarget2 = _positionRenderTarget.clone();
-    _copyTexture(_createPositionTexture(), _positionRenderTarget);
-    _copyTexture(_positionRenderTarget, _positionRenderTarget2);
-
+	var texture = _createPositionTexture();
+    _copyTexture(texture, _positionRenderTarget);
+    _copyTexture(texture, _positionRenderTarget2);
 }
 
 function _copyTexture(input, output) {
     _mesh.material = _copyShader;
     _copyShader.uniforms.texture.value = input;
-    _renderer.render( _scene, _camera, output );
+	_renderer.setRenderTarget(output);
+    _renderer.render( _scene, _camera);
+	_renderer.setRenderTarget(null);
 }
 
 function _updatePosition(dt) {
@@ -117,9 +119,11 @@ function _updatePosition(dt) {
 
     _mesh.material = _positionShader;
     _positionShader.uniforms.textureDefaultPosition.value = _textureDefaultPosition;
-    _positionShader.uniforms.texturePosition.value = _positionRenderTarget2;
+    _positionShader.uniforms.texturePosition.value = _positionRenderTarget2.texture;
     _positionShader.uniforms.time.value += dt * 0.001;
-    _renderer.render( _scene, _camera, _positionRenderTarget );
+	_renderer.setRenderTarget(_positionRenderTarget);
+    _renderer.render( _scene, _camera);
+	_renderer.setRenderTarget(null);
 }
 
 function _createPositionTexture() {
@@ -158,7 +162,7 @@ function update(dt) {
         }
 
         var autoClearColor = _renderer.autoClearColor;
-        var clearColor = _renderer.getClearColor().getHex();
+        var clearColor = _renderer.getClearColor(new THREE.Color()).getHex();
         var clearAlpha = _renderer.getClearAlpha();
 
         _renderer.autoClearColor = false;

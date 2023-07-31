@@ -46,6 +46,7 @@ function init(renderer, scene, camera) {
 }
 
 function resize(width, height) {
+	
     resolution.set(width, height);
 
     fromRenderTarget.setSize(width, height);
@@ -69,10 +70,13 @@ function renderQueue(dt) {
 
     if(renderableQueue.length) {
 
-
         toRenderTarget.depthBuffer = true;
         toRenderTarget.stencilBuffer = true;
-        exports.renderer.render( exports.scene, exports.camera, toRenderTarget );
+		
+		exports.renderer.setRenderTarget(toRenderTarget);
+        exports.renderer.render( exports.scene, exports.camera );
+		exports.renderer.setRenderTarget(null);
+		
         // toRenderTarget.depthBuffer = false;
         // toRenderTarget.stencilBuffer = false;
         swapRenderTarget();
@@ -93,7 +97,9 @@ function renderScene(renderTarget, scene, camera) {
     scene = scene || exports.scene;
     camera = camera || exports.camera;
     if(renderTarget) {
-        exports.renderer.render( scene, camera, renderTarget );
+		exports.renderer.setRenderTarget(renderTarget);
+        exports.renderer.render( scene, camera);
+		exports.renderer.setRenderTarget(null);
     } else {
         exports.renderer.render( scene, camera );
     }
@@ -110,7 +116,6 @@ function swapRenderTarget() {
     toRenderTarget = exports.toRenderTarget = fromRenderTarget;
     fromRenderTarget = exports.fromRenderTarget = tmp;
 }
-
 
 function getRenderTarget(bitShift, isRGBA) {
     bitShift = bitShift || 0;
