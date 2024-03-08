@@ -1,7 +1,5 @@
 var dat = require('dat-gui');
 var Stats = require('stats.js');
-var css = require('dom-css');
-var raf = require('raf');
 
 var THREE = require('three');
 
@@ -50,12 +48,10 @@ function init() {
 
     if(settings.useStats) {
         _stats = new Stats();
-        css(_stats.domElement, {
-            position : 'absolute',
-            left : '0px',
-            top : '0px',
-            zIndex : 2048
-        });
+        _stats.domElement.style.position = 'absolute';
+        _stats.domElement.style.left = '0px';
+        _stats.domElement.style.top = '0px';
+        _stats.domElement.style.zIndex = 2048;
 
         document.body.appendChild( _stats.domElement );
     }
@@ -228,7 +224,7 @@ function _onResize() {
 
 function _loop() {
     var newTime = Date.now();
-    raf(_loop);
+    requestAnimationFrame(_loop);
     if(settings.useStats) _stats.begin();
     _render(newTime - _time, newTime);
     if(settings.useStats) _stats.end();
