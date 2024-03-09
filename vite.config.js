@@ -2,5 +2,5 @@ import { defineConfig } from "vite";
 import glslify from "vite-plugin-glslify";
 
 export default defineConfig({
-  plugins: [glslify()],
+  plugins: [glslify.default()],
 });

@@ -1,97 +1,99 @@
-var THREE = require('three');
-var glslify = require('glslify');
+import * as THREE from "three";
+import quadVertexShader from "./quad.vert";
+import quadFragmentShader from "./quad.frag";
 
-var undef;
+const undef = undefined;
 
+let _renderer;
+let _mesh;
+let _scene;
+let _camera;
 
-var _renderer;
-var _mesh;
-var _scene;
-var _camera;
+export let rawShaderPrefix;
+export let vertexShader;
+export let copyMaterial;
 
-var rawShaderPrefix = exports.rawShaderPrefix = undef;
-var vertexShader = exports.vertexShader = undef;
-var copyMaterial = exports.copyMaterial = undef;
+export function init(renderer) {
+  // ensure it wont initialized twice
+  if (_renderer) return;
 
-exports.init = init;
-exports.copy = copy;
-exports.render = render;
-exports.createRenderTarget = createRenderTarget;
-exports.getColorState = getColorState;
-exports.setColorState = setColorState;
+  _renderer = renderer;
 
-function init(renderer) {
+  rawShaderPrefix =
+    "precision " + _renderer.capabilities.precision + " float;\n";
 
-    // ensure it wont initialized twice
-    if(_renderer) return;
+  _scene = new THREE.Scene();
+  _camera = new THREE.Camera();
+  _camera.position.z = 1;
 
-    _renderer = renderer;
+  vertexShader = rawShaderPrefix + quadVertexShader;
+  const fragmentShader = rawShaderPrefix + quadFragmentShader;
 
-    rawShaderPrefix = exports.rawShaderPrefix = 'precision ' + _renderer.capabilities.precision + ' float;\n';
+  copyMaterial = new THREE.RawShaderMaterial({
+    uniforms: {
+      u_texture: { type: "t", value: undef },
+    },
+    vertexShader,
+    fragmentShader,
+  });
 
-    _scene = new THREE.Scene();
-    _camera = new THREE.Camera();
-    _camera.position.z = 1;
-
-    copyMaterial = exports.copyMaterial = new THREE.RawShaderMaterial({
-        uniforms: {
-            u_texture: { type: 't', value: undef }
-        },
-        vertexShader: vertexShader = exports.vertexShader = rawShaderPrefix + glslify('./quad.vert'),
-        fragmentShader: rawShaderPrefix + glslify('./quad.frag')
-    });
-
-    _mesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2 ), copyMaterial );
-    _scene.add( _mesh );
-
+  _mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), copyMaterial);
+  _scene.add(_mesh);
 }
 
-function copy(inputTexture, ouputTexture) {
-    _mesh.material = copyMaterial;
-    copyMaterial.uniforms.u_texture.value = inputTexture;
-    if(ouputTexture) {
-		_renderer.setRenderTarget(ouputTexture);
-        _renderer.render( _scene, _camera );
-		_renderer.setRenderTarget(null);
-    } else {
-        _renderer.render( _scene, _camera );
-    }
+export function copy(inputTexture, ouputTexture) {
+  _mesh.material = copyMaterial;
+  copyMaterial.uniforms.u_texture.value = inputTexture;
+  if (ouputTexture) {
+    _renderer.setRenderTarget(ouputTexture);
+    _renderer.render(_scene, _camera);
+    _renderer.setRenderTarget(null);
+  } else {
+    _renderer.render(_scene, _camera);
+  }
 }
-function render(material, renderTarget) {
-    _mesh.material = material;
-    if(renderTarget) {
-		_renderer.setRenderTarget(renderTarget);
-        _renderer.render( _scene, _camera );
-		_renderer.setRenderTarget(null);
-    } else {
-        _renderer.render( _scene, _camera );
-    }
-}
-
-function createRenderTarget(width, height, format, type, minFilter, magFilter) {
-    var renderTarget = new THREE.WebGLRenderTarget(width || 1, height || 1, {
-        format: format || THREE.RGBFormat,
-        type: type || THREE.UnsignedByteType,
-        minFilter: minFilter || THREE.LinearFilter,
-        magFilter: magFilter || THREE.LinearFilter,
-        // depthBuffer: false,
-        // stencilBuffer: false
-    });
-
-    renderTarget.texture.generateMipMaps = false;
-
-    return renderTarget;
+export function render(material, renderTarget) {
+  _mesh.material = material;
+  if (renderTarget) {
+    _renderer.setRenderTarget(renderTarget);
+    _renderer.render(_scene, _camera);
+    _renderer.setRenderTarget(null);
+  } else {
+    _renderer.render(_scene, _camera);
+  }
 }
 
-function getColorState() {
-    return {
-        autoClearColor : _renderer.autoClearColor,
-        clearColor : _renderer.getClearColor(new THREE.Color()).getHex(),
-        clearAlpha : _renderer.getClearAlpha()
-    };
+export function createRenderTarget(
+  width,
+  height,
+  format,
+  type,
+  minFilter,
+  magFilter
+) {
+  const renderTarget = new THREE.WebGLRenderTarget(width || 1, height || 1, {
+    format: format || THREE.RGBFormat,
+    type: type || THREE.UnsignedByteType,
+    minFilter: minFilter || THREE.LinearFilter,
+    magFilter: magFilter || THREE.LinearFilter,
+    // depthBuffer: false,
+    // stencilBuffer: false
+  });
+
+  renderTarget.texture.generateMipMaps = false;
+
+  return renderTarget;
 }
 
-function setColorState(state) {
-    _renderer.setClearColor(state.clearColor, state.clearAlpha);
-    _renderer.autoClearColor = state.autoClearColor;
+export function getColorState() {
+  return {
+    autoClearColor: _renderer.autoClearColor,
+    clearColor: _renderer.getClearColor(new THREE.Color()).getHex(),
+    clearAlpha: _renderer.getClearAlpha(),
+  };
+}
+
+export function setColorState(state) {
+  _renderer.setClearColor(state.clearColor, state.clearAlpha);
+  _renderer.autoClearColor = state.autoClearColor;
 }

@@ -1,20 +1,22 @@
-var Effect = require('../Effect');
-var glslify = require('glslify');
+import Effect from "../Effect";
+import lowFxaaVertexShader from "./lowFxaa.vert";
+import lowFxaaFragmentShader from "./lowFxaa.frag";
+import fxaaFragmentShader from "./fxaa.frag";
 
-module.exports = new Effect();
-var _super = Effect.prototype;
+let exports = new Effect();
+let _super = Effect.prototype;
 
-module.exports.init = init;
+exports.init = init;
 
 function init(isLow) {
+  let vs = isLow ? lowFxaaVertexShader : "";
+  let fs = isLow ? lowFxaaFragmentShader : fxaaFragmentShader;
 
-    var vs = isLow ? glslify('./lowFxaa.vert') : '';
-    var fs = isLow ? glslify('./lowFxaa.frag') : glslify('./fxaa.frag');
-
-    _super.init.call(this, {
-        uniforms: {},
-        vertexShader: vs,
-        fragmentShader: fs
-    });
-
+  _super.init.call(this, {
+    uniforms: {},
+    vertexShader: vs,
+    fragmentShader: fs,
+  });
 }
+
+export default exports;

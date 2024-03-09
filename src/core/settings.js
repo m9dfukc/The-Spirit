@@ -1,53 +1,58 @@
-var parse = require('mout/queryString/parse');
-var keys = require('mout/object/keys');
-var query = exports.query = parse(window.location.href.replace('#','?'));
+import { getUrlParam } from "../utils/helpers";
 
-exports.useStats = false;
-exports.isMobile = /(iPad|iPhone|Android)/i.test(navigator.userAgent);
-
-var amountMap = {
-    '4k' : [64, 64, 0.29],
-    '8k' : [128, 64, 0.42],
-    '16k' : [128, 128, 0.48],
-    '32k' : [256, 128, 0.55],
-    '65k' : [256, 256, 0.6],
-    '131k' : [512, 256, 0.85],
-    '252k' : [512, 512, 1.2],
-    '524k' : [1024, 512, 1.4],
-    '1m' : [1024, 1024, 1.6],
-    '2m' : [2048, 1024, 2],
-    '4m' : [2048, 2048, 2.5]
+const amountMap = {
+  "4k": [64, 64, 0.29],
+  "8k": [128, 64, 0.42],
+  "16k": [128, 128, 0.48],
+  "32k": [256, 128, 0.55],
+  "65k": [256, 256, 0.6],
+  "131k": [512, 256, 0.85],
+  "252k": [512, 512, 1.2],
+  "524k": [1024, 512, 1.4],
+  "1m": [1024, 1024, 1.6],
+  "2m": [2048, 1024, 2],
+  "4m": [2048, 2048, 2.5],
 };
 
-exports.amountList = keys(amountMap);
-query.amount = amountMap[query.amount] ? query.amount : exports.isMobile ? '16k' : '65k';
-var amountInfo = amountMap[query.amount];
-exports.simulatorTextureWidth = amountInfo[0];
-exports.simulatorTextureHeight = amountInfo[1];
+const useStats = false;
+const isMobile = /(iPad|iPhone|Android)/i.test(navigator.userAgent);
+const amount = getUrlParam("amount", "16k");
+const motionBlurQuality = getUrlParam("motionBlurQuality", "best");
+const amountInfo = amountMap[amount];
+const query = { amount, motionBlurQuality };
 
-exports.useTriangleParticles = true;
-exports.followMouse = !exports.isMobile;
-
-exports.speed = 1;
-exports.dieSpeed = 0.015;
-exports.radius = amountInfo[2] * 1.3;
-exports.curlSize = 0.02;
-exports.attraction = 1;
-exports.shadowDarkness = 1.00;
-
-exports.bgColor = '#000000';
-exports.color1 = '#3f3f3f';
-exports.color2 = '#303030';
-
-exports.fxaa = false;
-var motionBlurQualityMap = exports.motionBlurQualityMap = {
-    best: 1,
-    high: 0.5,
-    medium: 1 / 3,
-    low: 0.25
+const motionBlurQualityMap = {
+  best: 1,
+  high: 0.5,
+  medium: 1 / 3,
+  low: 0.25,
 };
-exports.motionBlurQualityList = keys(motionBlurQualityMap);
-query.motionBlurQuality = motionBlurQualityMap[query.motionBlurQuality] ? query.motionBlurQuality : 'medium';
-exports.motionBlur = false;
-exports.motionBlurPause = false;
-exports.bloom = false;
+
+const options = {
+  query,
+  useStats,
+  isMobile,
+  amountMap,
+  motionBlurQualityMap,
+  amountList: Object.keys(amountMap),
+  simulatorTextureWidth: amountInfo[0],
+  simulatorTextureHeight: amountInfo[1],
+  useTriangleParticles: true,
+  followMouse: !isMobile,
+  speed: 1,
+  dieSpeed: 0.015,
+  radius: 0.29 * 1.3,
+  curlSize: 0.02,
+  attraction: 1,
+  shadowDarkness: 0.0,
+  bgColor: "#666666",
+  color1: "#FFFFFF",
+  color2: "#FFFFFF",
+  fxaa: false,
+  motionBlurQualityList: Object.keys(motionBlurQualityMap),
+  motionBlur: false,
+  motionBlurPause: false,
+  bloom: false,
+};
+
+export default options;
