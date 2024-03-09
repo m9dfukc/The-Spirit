@@ -17,7 +17,7 @@ const amountMap = {
 const useStats = false;
 const isMobile = /(iPad|iPhone|Android)/i.test(navigator.userAgent);
 const amount = getUrlParam("amount", "16k");
-const motionBlurQuality = getUrlParam("motionBlurQuality", "best");
+const motionBlurQuality = getUrlParam("motionBlurQuality", "low");
 const amountInfo = amountMap[amount];
 const query = { amount, motionBlurQuality };
 
@@ -38,13 +38,13 @@ const options = {
   simulatorTextureWidth: amountInfo[0],
   simulatorTextureHeight: amountInfo[1],
   useTriangleParticles: true,
-  followMouse: !isMobile,
+  followMouse: false,
   speed: 1,
   dieSpeed: 0.015,
   radius: 0.29 * 1.3,
   curlSize: 0.02,
   attraction: 1,
-  shadowDarkness: 0.0,
+  shadowDarkness: 0.4,
   bgColor: "#666666",
   color1: "#FFFFFF",
   color2: "#FFFFFF",

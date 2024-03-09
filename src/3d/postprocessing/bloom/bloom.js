@@ -40,11 +40,12 @@ function init() {
 }
 
 function render(dt, renderTarget, toScreen) {
-  var tmpRenderTarget1 = effectComposer.getRenderTarget(BLUR_BIT_SHIFT);
-  var tmpRenderTarget2 = effectComposer.getRenderTarget(BLUR_BIT_SHIFT);
+  let tmpRenderTarget1 = effectComposer.getRenderTarget(BLUR_BIT_SHIFT);
+  let tmpRenderTarget2 = effectComposer.getRenderTarget(BLUR_BIT_SHIFT);
   effectComposer.releaseRenderTarget(tmpRenderTarget1, tmpRenderTarget2);
 
-  var blurRadius = exports.blurRadius;
+  let blurRadius = exports.blurRadius;
+
   _blurMaterial.uniforms.u_texture.value = renderTarget.texture;
   _blurMaterial.uniforms.u_delta.value.set(
     blurRadius / effectComposer.resolution.x,

@@ -1,7 +1,7 @@
-import * as effectComposer from "./effectComposer";
-// import * as fxaa from "./fxaa/fxaa";
-// import * as bloom from "./bloom/bloom";
+import fxaa from "./fxaa/fxaa";
+import bloom from "./bloom/bloom";
 import motionBlur from "./motionBlur/motionBlur";
+import * as effectComposer from "./effectComposer";
 import * as fboHelper from "../fboHelper";
 
 let _renderer, _scene, _camera;
@@ -18,14 +18,14 @@ export function init(renderer, scene, camera) {
   // for less power machine, pass true
   // fxaa.init(true);
 
-  // fxaa.init();
-  // effectComposer.queue.push(fxaa);
+  fxaa.init();
+  effectComposer.queue.push(fxaa);
 
   motionBlur.init();
   effectComposer.queue.push(motionBlur);
 
-  // bloom.init();
-  // effectComposer.queue.push(bloom);
+  bloom.init();
+  effectComposer.queue.push(bloom);
 }
 
 export function resize(width, height) {

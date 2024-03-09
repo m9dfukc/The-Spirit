@@ -165,10 +165,6 @@ export function update(dt) {
   if (settings.speed || settings.dieSpeed) {
     let r = 200;
     let h = 60;
-    if (settings.isMobile) {
-      r = 100;
-      h = 40;
-    }
 
     let autoClearColor = _renderer.autoClearColor;
     let clearColor = _renderer.getClearColor(new THREE.Color()).getHex();

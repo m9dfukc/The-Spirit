@@ -48,13 +48,14 @@ function init() {
   settings.mouse3d = _ray.origin;
 
   _renderer = new THREE.WebGLRenderer({
-    antialias: !settings.isMobile,
+    antialias: true,
   });
+  _renderer.shadowIntensity = 0;
   _renderer.setClearColor(settings.bgColor);
   _renderer.setSize(_width, _height);
 
-  _renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   _renderer.shadowMap.enabled = true;
+  _renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   document.getElementById("root").appendChild(_renderer.domElement);
 
   _scene = new THREE.Scene();
@@ -62,6 +63,7 @@ function init() {
 
   _camera = new THREE.PerspectiveCamera(45, 1, 10, 3000);
   _camera.position.set(300, 60, 300).normalize().multiplyScalar(1000);
+
   settings.camera = _camera;
   settings.cameraPosition = _camera.position;
 
@@ -74,8 +76,6 @@ function init() {
 
   lights.init(_renderer);
   _scene.add(lights.mesh);
-
-  _scene.add(new THREE.PointLightHelper(lights.pointLight));
 
   floor.init(_renderer);
   floor.mesh.position.y = -100;
@@ -97,16 +97,16 @@ function init() {
   }
 
   const simulatorGui = _gui.addFolder("Simulator");
-  // simulatorGui
-  //   .add(settings.query, "amount", settings.amountList)
-  //   .onChange(function () {
-  //     if (confirm("It will restart the demo")) {
-  //       window.location.href =
-  //         window.location.href.split("#")[0] +
-  //         encode(settings.query).replace("?", "#");
-  //       window.location.reload();
-  //     }
-  //   });
+  simulatorGui
+    .add(settings.query, "amount", settings.amountList)
+    .onChange(function () {
+      const { amount, motionBlurQuality } = settings.query;
+      if (confirm("It will restart the demo")) {
+        window.location.href =
+          "#amount=" + amount + "&motionBlurQuality=" + motionBlurQuality;
+        window.location.reload();
+      }
+    });
   simulatorGui.add(settings, "speed", 0, 3).listen();
   simulatorGui.add(settings, "dieSpeed", 0.0005, 0.05).listen();
   simulatorGui.add(settings, "radius", 0.2, 3);
@@ -265,9 +265,9 @@ function _render(dt, newTime) {
   simulator.update(dt);
   particles.update(dt);
 
-  // fxaa.enabled = !!settings.fxaa;
-  // motionBlur.enabled = !!settings.motionBlur;
-  // bloom.enabled = !!settings.bloom;
+  fxaa.enabled = !!settings.fxaa;
+  motionBlur.enabled = !!settings.motionBlur;
+  bloom.enabled = !!settings.bloom;
 
   // _renderer.render(_scene, _camera);
   postprocessing.render(dt, newTime);

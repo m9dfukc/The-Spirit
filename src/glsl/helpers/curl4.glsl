@@ -1,4 +1,5 @@
-#pragma glslify: snoise4 = require(./simplexNoiseDerivatives4)
+#pragma glslify: simplexNoiseDerivatives = require(./simplexNoiseDerivatives4)
+#include ./simplexNoiseDerivatives4;
 
 vec3 curl( in vec3 p, in float noiseTime, in float persistence ) {
 
@@ -11,9 +12,9 @@ vec3 curl( in vec3 p, in float noiseTime, in float persistence ) {
         float twoPowI = pow(2.0, float(i));
         float scale = 0.5 * twoPowI * pow(persistence, float(i));
 
-        xNoisePotentialDerivatives += snoise4(vec4(p * twoPowI, noiseTime)) * scale;
-        yNoisePotentialDerivatives += snoise4(vec4((p + vec3(123.4, 129845.6, -1239.1)) * twoPowI, noiseTime)) * scale;
-        zNoisePotentialDerivatives += snoise4(vec4((p + vec3(-9519.0, 9051.0, -123.0)) * twoPowI, noiseTime)) * scale;
+        xNoisePotentialDerivatives += simplexNoiseDerivatives(vec4(p * twoPowI, noiseTime)) * scale;
+        yNoisePotentialDerivatives += simplexNoiseDerivatives(vec4((p + vec3(123.4, 129845.6, -1239.1)) * twoPowI, noiseTime)) * scale;
+        zNoisePotentialDerivatives += simplexNoiseDerivatives(vec4((p + vec3(-9519.0, 9051.0, -123.0)) * twoPowI, noiseTime)) * scale;
     }
 
     return vec3(

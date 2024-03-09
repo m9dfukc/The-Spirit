@@ -12,6 +12,9 @@ uniform vec3 mouse3d;
 
 #pragma glslify: curl = require(./helpers/curl4)
 
+#include ./helpers/curl4;
+
+
 void main() {
 
     vec2 uv = gl_FragCoord.xy / resolution.xy;

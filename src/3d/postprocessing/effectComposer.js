@@ -1,7 +1,6 @@
+import merge from "mout/object/merge";
 import * as THREE from "three";
 import * as fboHelper from "../fboHelper";
-import merge from "mout/object/merge";
-import { _ } from "mout/function/partial";
 
 const undef = undefined;
 
