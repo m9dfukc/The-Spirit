@@ -35,8 +35,6 @@ export function init(renderer) {
   const rawShaderPrefix =
     "precision " + renderer.capabilities.precision + " float;\n";
 
-  console.log(rawShaderPrefix);
-
   const gl = _renderer.getContext();
   if (!gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS)) {
     alert("No support for vertex shader textures!");
