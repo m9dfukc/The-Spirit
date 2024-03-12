@@ -26,7 +26,7 @@ void main() {
     vec3 followPosition = mix(vec3(0.0, -(1.0 - initAnimation) * 200.0, 0.0), mouse3d, smoothstep(0.2, 0.7, initAnimation));
 
     if(life < 0.0) {
-        positionInfo = texture2D( textureDefaultPosition, uv );
+        // positionInfo = texture2D( textureDefaultPosition, uv );
         position = positionInfo.xyz * (1.0 + sin(time * 15.0) * 0.2 + (1.0 - initAnimation)) * 0.4 * radius;
         position += followPosition;
         life = 0.5 + fract(positionInfo.w * 21.4131 + time);

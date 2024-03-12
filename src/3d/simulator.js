@@ -35,6 +35,8 @@ export function init(renderer) {
   const rawShaderPrefix =
     "precision " + renderer.capabilities.precision + " float;\n";
 
+  console.log(rawShaderPrefix);
+
   const gl = _renderer.getContext();
   if (!gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS)) {
     alert("No support for vertex shader textures!");
@@ -161,7 +163,7 @@ function _createPositionTexture() {
   return texture;
 }
 
-export function update(dt) {
+export function update(dt, preview) {
   if (settings.speed || settings.dieSpeed) {
     let r = 200;
     let h = 60;
@@ -194,6 +196,8 @@ export function update(dt) {
     }
 
     _updatePosition(dt);
+    // console.log(preview);
+    preview.material.map = positionRenderTarget.texture;
 
     _renderer.setClearColor(clearColor, clearAlpha);
     _renderer.autoClearColor = autoClearColor;

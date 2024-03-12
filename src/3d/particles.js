@@ -11,6 +11,8 @@ import trianglesDistanceVertexShader from "../glsl/trianglesDistance.vert";
 import trianglesMotionVertexShader from "../glsl/trianglesMotion.vert";
 import MeshMotionMaterial from "./postprocessing/motionBlur/MeshMotionMaterial";
 
+console.log(particlesVertexShader);
+
 const undef = undefined;
 export let container;
 
@@ -25,12 +27,17 @@ let _color1;
 let _color2;
 let _tmpColor;
 
+let _rawShaderPrefix;
+
 const TEXTURE_WIDTH = settings.simulatorTextureWidth;
 const TEXTURE_HEIGHT = settings.simulatorTextureHeight;
 const AMOUNT = TEXTURE_WIDTH * TEXTURE_HEIGHT;
 
 export function init(renderer, simulator) {
   container = new THREE.Object3D();
+
+  _rawShaderPrefix =
+    "precision " + renderer.capabilities.precision + " float;\n";
 
   _tmpColor = new THREE.Color();
   _color1 = new THREE.Color(settings.color1);
@@ -70,8 +77,8 @@ function _createParticleMesh() {
         color2: { type: "c", value: undef },
       },
     ]),
-    vertexShader: particlesVertexShader,
-    fragmentShader: particlesFragmentShader,
+    vertexShader: _rawShaderPrefix + particlesVertexShader,
+    fragmentShader: _rawShaderPrefix + particlesFragmentShader,
     blending: THREE.NoBlending,
     side: THREE.DoubleSide,
     lights: true,
@@ -88,8 +95,8 @@ function _createParticleMesh() {
       lightPos: { type: "v3", value: new THREE.Vector3(0, 0, 0) },
       texturePosition: { type: "t", value: undef },
     },
-    vertexShader: particlesDistanceVertexShader,
-    fragmentShader: particlesDistanceFragmentShader,
+    vertexShader: _rawShaderPrefix + particlesDistanceVertexShader,
+    fragmentShader: _rawShaderPrefix + particlesDistanceFragmentShader,
     depthTest: true,
     depthWrite: true,
     side: THREE.BackSide,
@@ -103,8 +110,8 @@ function _createParticleMesh() {
       texturePosition: { type: "t", value: undef },
       texturePrevPosition: { type: "t", value: undef },
     },
-    vertexShader: particlesMotionVertexShader,
-    fragmentShader: motionBlurMotionFragmentShader,
+    vertexShader: _rawShaderPrefix + particlesMotionVertexShader,
+    fragmentShader: _rawShaderPrefix + motionBlurMotionFragmentShader,
     depthTest: true,
     depthWrite: true,
     side: THREE.DoubleSide,
@@ -203,8 +210,8 @@ function _createTriangleMesh() {
         cameraMatrix: { type: "m4", value: undef },
       },
     ]),
-    vertexShader: trianglesVertexShader,
-    fragmentShader: particlesFragmentShader,
+    vertexShader: _rawShaderPrefix + trianglesVertexShader,
+    fragmentShader: _rawShaderPrefix + particlesFragmentShader,
     blending: THREE.NoBlending,
     side: THREE.DoubleSide,
     lights: true,
@@ -229,8 +236,8 @@ function _createTriangleMesh() {
         flipRatio: { type: "f", value: 0 },
       },
     ]),
-    vertexShader: trianglesDistanceVertexShader,
-    fragmentShader: particlesDistanceFragmentShader,
+    vertexShader: _rawShaderPrefix + trianglesDistanceVertexShader,
+    fragmentShader: _rawShaderPrefix + particlesDistanceFragmentShader,
     depthTest: true,
     depthWrite: true,
     side: THREE.BackSide,
@@ -248,8 +255,8 @@ function _createTriangleMesh() {
       flipRatio: { type: "f", value: 0 },
       cameraMatrix: { type: "m4", value: undef },
     },
-    vertexShader: trianglesMotionVertexShader,
-    fragmentShader: motionBlurMotionFragmentShader,
+    vertexShader: _rawShaderPrefix + trianglesMotionVertexShader,
+    fragmentShader: _rawShaderPrefix + motionBlurMotionFragmentShader,
     depthTest: true,
     depthWrite: true,
     side: THREE.DoubleSide,

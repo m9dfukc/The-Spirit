@@ -32,6 +32,8 @@ let _initAnimation = 0;
 
 let _bgColor;
 
+let _preview;
+
 function init() {
   if (settings.useStats) {
     _stats = new Stats();
@@ -80,6 +82,17 @@ function init() {
   floor.init(_renderer);
   floor.mesh.position.y = -100;
   _scene.add(floor.mesh);
+
+  const previewMaterial = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    roughness: 0.5,
+    metalness: 0.5,
+  });
+  _preview = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), previewMaterial);
+  _preview.doubleSided = true;
+  _preview.position.x = -200;
+  // _preview.position.y = _height / 2 - 100;
+  _scene.add(_preview);
 
   _control = new OrbitControls(_camera, _renderer.domElement);
   _control.target.y = 50;
@@ -262,15 +275,15 @@ function _render(dt, newTime) {
     _ray.origin.length() /
     Math.cos(Math.PI - _ray.direction.angleTo(_ray.origin));
   _ray.origin.add(_ray.direction.multiplyScalar(distance * 1.0));
-  simulator.update(dt);
+  simulator.update(dt, _preview);
   particles.update(dt);
 
   fxaa.enabled = !!settings.fxaa;
   motionBlur.enabled = !!settings.motionBlur;
   bloom.enabled = !!settings.bloom;
 
-  // _renderer.render(_scene, _camera);
   postprocessing.render(dt, newTime);
+  // _renderer.render(_scene, _camera);
 }
 
 init();
